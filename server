@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net;
+using System.Net.Sockets;
+using System.IO;
+using System.Threading;
+
+namespace server
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 345);
+            Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            server.Bind(ipep);
+            server.Listen(5);
+            Console.WriteLine("Waiting to connect..");
+            Socket client = server.Accept();
+            Console.WriteLine("Connect with " + client.RemoteEndPoint.ToString());
+            //Sử dụng dữ liệu
+            NetworkStream K = new NetworkStream(client);
+            StreamReader sr = new StreamReader(K);
+            StreamWriter sw = new StreamWriter(K);
+            String M = "Welcome to server ";
+            sw.WriteLine(M);
+            sw.Flush();
+           
+            while (true)
+            {
+                M = sr.ReadLine();
+                Console.WriteLine("Client : " + M);
+                if (M.ToUpper().Equals("Exit "))
+                    break;
+                M = Console.ReadLine();
+                sw.WriteLine(M);
+                sw.Flush();
+
+            }
+            sw.Close();
+            sr.Close();
+            client.Close();
+            server.Close();
+        }
+    }
+}
