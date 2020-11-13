@@ -1,0 +1,42 @@
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.IO;
+using System.Threading;
+
+
+namespace client
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 345);
+            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            client.Connect(ipep);
+            NetworkStream K = new NetworkStream(client);
+            StreamReader sr = new StreamReader(K);
+            StreamWriter sw = new StreamWriter(K);
+            while (true)
+            {
+
+                String M = sr.ReadLine();
+                Console.WriteLine("Server : " + M);
+                M = Console.ReadLine();
+                if (M.ToUpper().Equals("Exit ")) break;
+                //data = Encoding.ASCII.GetBytes(M);
+                //K.Write(data, 0, data.Length);
+                sw.WriteLine(M);
+                sw.Flush();
+            }
+            sw.Close();
+            sr.Close();
+            K.Close();
+            client.Close();
+        }
+    }
+}
